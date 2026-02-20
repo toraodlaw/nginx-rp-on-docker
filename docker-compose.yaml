@@ -1,0 +1,36 @@
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-reverse-proxy
+    ports:
+      - "8080:80"
+    restart: unless-stop
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app1
+      - app2
+      - app3
+    networks:
+      - reverse-proxy
+
+  app1:
+    build: ./app1-python
+    container_name: app1-python
+    networks:
+      - reverse-proxy
+
+  app2:
+    build: ./app2-node
+    container_name: app2-node
+    networks:
+      - reverse-proxy
+
+  app3:
+    build: ./app3-php
+    container_name: app3-php
+    networks:
+      - reverse-proxy
+
+networks:
+  reverse-proxy:
